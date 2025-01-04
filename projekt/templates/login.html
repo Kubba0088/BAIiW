@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="POST">
+        <p>Email: <input type="email" name="email" required></p>
+        <p>Password: <input type="password" name="password" required></p>
+        <button type="submit">Login</button>
+    </form>
+
+    <!-- Wyświetlanie komunikatów flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }}" style="color: red;">{{ message|safe }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <a href="/register">Don't have an account? Register</a>
+</body>
+</html>
