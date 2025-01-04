@@ -1,0 +1,49 @@
+Zadanie 1: Dodanie mechanizmu logowania prób logowania
+Cel:
+Zarejestrowanie każdej próby logowania (zarówno udanej, jak i nieudanej) w celu analizy aktywności użytkowników oraz potencjalnych ataków.
+
+Kroki:
+a) Stwórz nowy model w bazie danych
+Zastanów się, jakie informacje powinny być przechowywane w tabeli logów prób logowania (np. adres e-mail, status próby, czas logowania). Wprowadź odpowiednie kolumny do modelu. Pomyśl o typach danych, które będą najbardziej odpowiednie.
+
+b) Rejestruj próby logowania
+W funkcji logowania zaprojektuj mechanizm, który:
+- Dodaje wpis w tabeli logów, jeśli próba logowania się powiedzie.
+- Dodaje wpis w tabeli logów, jeśli próba logowania się nie powiedzie.
+Zastanów się, jak wywołać zapis tych danych w funkcji logowania, aby każda próba była zarejestrowana.
+
+c) Wyświetl logi w panelu admina
+Utwórz widok w panelu administracyjnym, który będzie pobierał dane z tabeli logów i wyświetlał je w tabeli HTML. Pomyśl, jakie informacje chcesz uwzględnić (np. najnowsze próby, sortowanie według daty).
+
+d) Przygotuj interfejs
+Stwórz prosty szablon HTML do wyświetlania prób logowania w formie tabeli. Zastanów się, jakie dane (np. status próby, e-mail) powinny być widoczne.
+
+Zadanie 2: Logowanie dwuskładnikowe (2FA)
+Cel:
+Dodanie drugiego kroku logowania w postaci kodu weryfikacyjnego (np. 6-cyfrowy kod generowany lokalnie).
+
+Kroki:
+a) Rozszerz model User
+Dodaj pole w modelu użytkownika, które będzie przechowywać kod weryfikacyjny. Zastanów się, jakie ograniczenia i typ danych będą odpowiednie dla takiego pola.
+
+b) Generowanie kodu 2FA
+W momencie logowania:
+- Sprawdź, jak wygenerować losowy kod weryfikacyjny (np. 6-cyfrowy).
+- Zapisz ten kod w bazie danych użytkownika.
+- Wyświetl kod na stronie (np. za pomocą komunikatu flash).
+Zastanów się, jak przechowywać kod, aby był bezpieczny i unikalny dla każdego logowania.
+
+c) Utwórz stronę weryfikacji kodu
+Stwórz widok w aplikacji, który:
+- Wymaga wprowadzenia kodu 2FA przez użytkownika.
+- Sprawdza poprawność kodu z bazą danych.
+- Resetuje kod po poprawnej weryfikacji, aby nie można było go użyć ponownie.
+
+d) Przygotuj formularz HTML
+Stwórz prosty formularz HTML, w którym użytkownik może wprowadzić kod. Zastanów się, jak poinformować użytkownika o nieprawidłowym kodzie.
+
+e) Testowanie
+- Zaloguj się na swoje konto.
+- Upewnij się, że kod 2FA jest generowany i wyświetlany.
+- Sprawdź, czy wprowadzenie poprawnego kodu odblokowuje dostęp do aplikacji.
+
