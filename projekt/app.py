@@ -52,7 +52,8 @@ def verify_reset_token(token):
 
 @app.route('/')
 def home():
-    return "Welcome to the application! <a href='/register'>Register</a> or <a href='/login'>Login</a>"
+    return render_template('home.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
