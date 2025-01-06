@@ -2,32 +2,39 @@
 <html>
 <head>
     <title>Admin Panel</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Admin Panel</h1>
-    <p>Only admins can access this page.</p>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        <p class="description">Only admins can access this page.</p>
 
-    <h2>Registered Users</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Email</th>
-                <th>Role</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <h2>Registered Users</h2>
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <a href="/dashboard">Back to Dashboard</a><br>
-    <a href="/logout">Logout</a>
+        <div class="links">
+            <a href="/dashboard">Back to Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
 </body>
 </html>

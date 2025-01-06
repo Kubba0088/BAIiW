@@ -2,26 +2,37 @@
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Login</h1>
-    <form method="POST">
-        <p>Email: <input type="email" name="email" required></p>
-        <p>Password: <input type="password" name="password" required></p>
-        <button type="submit">Login</button>
-    </form>
+    <div class="container">
+        <!-- Register Section -->
+        <div class="register-section">
+            <a href="/register">Don't have an account? Register</a>
+        </div>
 
-    <!-- Wyświetlanie komunikatów flash -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul>
-            {% for category, message in messages %}
-                <li class="{{ category }}" style="color: red;">{{ message|safe }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+        <!-- Flash Messages Section -->
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message|safe }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
 
-    <a href="/register">Don't have an account? Register</a>
+        <!-- Login Form Section -->
+        <div class="login-section">
+            <h1>Login</h1>
+            <form method="POST">
+                <p>Email: <input type="email" name="email" required></p>
+                <p>Password: <input type="password" name="password" required></p>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
