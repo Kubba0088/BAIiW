@@ -1,49 +1,43 @@
-Zadanie 1: Dodanie mechanizmu logowania prób logowania
+Zadanie 1: Implementacja blokady konta po kilku nieudanych próbach logowania
 Cel:
-Zarejestrowanie każdej próby logowania (zarówno udanej, jak i nieudanej) w celu analizy aktywności użytkowników oraz potencjalnych ataków.
+Użytkownik ma zaimplementować mechanizm blokady konta po 5 nieudanych próbach logowania w ciągu 15 minut.
 
-Kroki:
-a) Stwórz nowy model w bazie danych
-Zastanów się, jakie informacje powinny być przechowywane w tabeli logów prób logowania (np. adres e-mail, status próby, czas logowania). Wprowadź odpowiednie kolumny do modelu. Pomyśl o typach danych, które będą najbardziej odpowiednie.
+Instrukcja:
+1. Dodanie nowych kolumn do tabeli User:
+- failed_attempts (integer): liczba nieudanych prób logowania.
+- last_failed_attempt (datetime): czas ostatniej próby logowania.
+- is_locked (boolean): informacja, czy konto jest zablokowane.
 
-b) Rejestruj próby logowania
-W funkcji logowania zaprojektuj mechanizm, który:
-- Dodaje wpis w tabeli logów, jeśli próba logowania się powiedzie.
-- Dodaje wpis w tabeli logów, jeśli próba logowania się nie powiedzie.
-Zastanów się, jak wywołać zapis tych danych w funkcji logowania, aby każda próba była zarejestrowana.
+2. Zmodyfikuj logikę w widoku /login:
+- Sprawdź, czy konto użytkownika jest zablokowane (is_locked).
+- Jeśli tak, wyświetl komunikat „Twoje konto jest zablokowane. Spróbuj ponownie za 15 minut.”
+- Jeśli użytkownik wprowadzi nieprawidłowe dane logowania:
+- Zwiększ licznik failed_attempts.
+- Ustaw czas ostatniej próby (last_failed_attempt).
+- Jeśli licznik osiągnie 5 w ciągu 15 minut, ustaw is_locked na True.
+- Jeśli użytkownik poda poprawne dane logowania:
+- Zresetuj licznik failed_attempts.
+- Ustaw is_locked na False.
 
-c) Wyświetl logi w panelu admina
-Utwórz widok w panelu administracyjnym, który będzie pobierał dane z tabeli logów i wyświetlał je w tabeli HTML. Pomyśl, jakie informacje chcesz uwzględnić (np. najnowsze próby, sortowanie według daty).
+3. Przetestuj mechanizm:
+- Zaloguj się z nieprawidłowymi danymi pięć razy i sprawdź, czy konto zostaje zablokowane.
+- Spróbuj zalogować się po 15 minutach, aby upewnić się, że blokada wygasa.
 
-d) Przygotuj interfejs
-Stwórz prosty szablon HTML do wyświetlania prób logowania w formie tabeli. Zastanów się, jakie dane (np. status próby, e-mail) powinny być widoczne.
-
-Zadanie 2: Logowanie dwuskładnikowe (2FA)
+Zadanie 2: Implementacja uwierzytelniania dwuskładnikowego (2FA)
 Cel:
-Dodanie drugiego kroku logowania w postaci kodu weryfikacyjnego (np. 6-cyfrowy kod generowany lokalnie).
+Zaimplementowanie mechanizmu uwierzytelniania dwuskładnikowego (2FA) w aplikacji Flask, w którym użytkownik loguje się za pomocą hasła, a następnie musi wprowadzić jednorazowy kod 2FA, aby uzyskać dostęp do swojego konta.
 
-Kroki:
-a) Rozszerz model User
-Dodaj pole w modelu użytkownika, które będzie przechowywać kod weryfikacyjny. Zastanów się, jakie ograniczenia i typ danych będą odpowiednie dla takiego pola.
+1. Zmodyfikuj widok /login:
+- Po poprawnym wprowadzeniu danych logowania:
+- Wygeneruj 6-cyfrowy kod 2FA.
+- Zapisz kod w bazie danych.
+- Przekieruj użytkownika na stronę /two_fa.
+- Symuluj wysłanie kodu na e-mail, wyświetlając go w konsoli (do uproszczenia).
 
-b) Generowanie kodu 2FA
-W momencie logowania:
-- Sprawdź, jak wygenerować losowy kod weryfikacyjny (np. 6-cyfrowy).
-- Zapisz ten kod w bazie danych użytkownika.
-- Wyświetl kod na stronie (np. za pomocą komunikatu flash).
-Zastanów się, jak przechowywać kod, aby był bezpieczny i unikalny dla każdego logowania.
+2. Dodaj widok /two_fa:
+- Stwórz formularz, który pozwoli użytkownikowi wprowadzić kod 2FA.
+- Zweryfikuj, czy kod 2FA jest poprawny:
+- Jeśli tak: zaloguj użytkownika i usuń kod 2FA z bazy danych.
+- Jeśli nie: wyświetl komunikat o błędzie i pozwól na ponowną próbę.
 
-c) Utwórz stronę weryfikacji kodu
-Stwórz widok w aplikacji, który:
-- Wymaga wprowadzenia kodu 2FA przez użytkownika.
-- Sprawdza poprawność kodu z bazą danych.
-- Resetuje kod po poprawnej weryfikacji, aby nie można było go użyć ponownie.
-
-d) Przygotuj formularz HTML
-Stwórz prosty formularz HTML, w którym użytkownik może wprowadzić kod. Zastanów się, jak poinformować użytkownika o nieprawidłowym kodzie.
-
-e) Testowanie
-- Zaloguj się na swoje konto.
-- Upewnij się, że kod 2FA jest generowany i wyświetlany.
-- Sprawdź, czy wprowadzenie poprawnego kodu odblokowuje dostęp do aplikacji.
-
+3. Przetestuj mechanizm
