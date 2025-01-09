@@ -1,9 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, flash, session, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from itsdangerous import URLSafeTimedSerializer
 from functools import wraps
 import os
+import random
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -18,6 +18,10 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     role = db.Column(db.String(10), default='user')
+    two_fa_code = db.Column(db.String(6), nullable=True)
+    failed_attempts = db.Column(db.Integer, default=0)
+    last_failed_attempt = db.Column(db.DateTime, nullable=True)
+    is_locked = db.Column(db.Boolean, default=False)
 
 def login_required(f):
     @wraps(f)
@@ -38,22 +42,9 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def generate_reset_token(email, expires_sec=600):
-    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    return s.dumps(email, salt='password-reset-salt')
-
-def verify_reset_token(token):
-    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=600)
-    except Exception:
-        return None
-    return email
-
 @app.route('/')
 def home():
     return render_template('home.html')
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -76,7 +67,6 @@ def register():
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
-@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -97,37 +87,12 @@ def dashboard():
     user = User.query.get(session['user_id'])
     return render_template('dashboard.html', user=user)
 
-@app.route('/reset_password', methods=['GET', 'POST'])
-def reset_request():
-    if request.method == 'POST':
-        email = request.form['email']
-        user = User.query.filter_by(email=email).first()
-        if user:
-            token = generate_reset_token(user.email)
-            reset_link = url_for('reset_token', token=token, _external=True)
-
-            print(f'Password reset link: {reset_link}')
-            flash('A password reset link has been generated and printed in the terminal.', 'info')
-        else:
-            flash('Email not found.', 'danger')
-        return redirect(url_for('login'))
-    return render_template('reset_request.html')
-
-
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_token(token):
-    email = verify_reset_token(token)
-    if not email:
-        flash('Invalid or expired token.', 'danger')
-        return redirect(url_for('reset_request'))
-    if request.method == 'POST':
-        new_password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
-        user = User.query.filter_by(email=email).first()
-        user.password = new_password
-        db.session.commit()
-        flash('Your password has been reset! You can now log in.', 'success')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html')
+@app.route('/admin')
+@admin_required
+def admin_panel():
+    current_user = User.query.get(session['user_id'])
+    users = User.query.all()
+    return render_template('admin.html', user=current_user, users=users)
 
 @app.route('/logout')
 @login_required
@@ -135,6 +100,7 @@ def logout():
     session.pop('user_id', None)
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     with app.app_context():
