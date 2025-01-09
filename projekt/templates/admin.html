@@ -7,6 +7,7 @@
 <body>
     <div class="container">
         <h1>Admin Panel</h1>
+        {% if user.role == 'admin' %}
         <p class="description">Only admins can access this page.</p>
 
         <h2>Registered Users</h2>
@@ -30,6 +31,9 @@
                 </tbody>
             </table>
         </div>
+        {% else %}
+        <p class="description">Access restricted to administrators only.</p>
+        {% endif %}
 
         <div class="links">
             <a href="/dashboard">Back to Dashboard</a>
