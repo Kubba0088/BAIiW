@@ -73,12 +73,16 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(email=email).first()
 
-        if user and bcrypt.check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            flash('Login successful!', 'success')
-            return redirect(url_for('dashboard'))
+        if user:
+            if bcrypt.check_password_hash(user.password, password):
+                session['user_id'] = user.id
+                flash('Login successful!', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Złe hasło. Spróbuj ponownie.', 'danger')
         else:
-            flash('Invalid email or password. <a href="/reset_password">Forgot your password?</a>', 'danger')
+            flash('Nie znaleziono użytkownika o podanym adresie e-mail.', 'danger')
+
     return render_template('login.html')
 
 @app.route('/dashboard')
