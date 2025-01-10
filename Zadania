@@ -40,4 +40,3 @@ Zaimplementowanie mechanizmu uwierzytelniania dwuskładnikowego (2FA) w aplikacj
 - Jeśli tak: zaloguj użytkownika i usuń kod 2FA z bazy danych.
 - Jeśli nie: wyświetl komunikat o błędzie i pozwól na ponowną próbę.
 
-3. Przetestuj mechanizm
